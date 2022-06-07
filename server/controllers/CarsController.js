@@ -1,0 +1,65 @@
+import { carsService } from "../services/CarsService.js"
+import BaseController from "../utils/BaseController.js"
+
+export class CarsController extends BaseController {
+  constructor() {
+    super('api/cars')
+    this.router
+      .get('', this.getAll)
+      .get('/:id', this.getById)
+      // bouncer
+      .post('', this.create)
+      .put('/:id', this.edit)
+      .delete('/:id', this.remove)
+  }
+
+
+
+
+  async getAll(req, res, next) {
+    try {
+      const cars = await carsService.getAll()
+      return res.send(cars)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+
+  async getById(req, res, next) {
+    try {
+      const car = await carsService.getById(req.params.id)
+      return res.send(car)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async create(req, res, next) {
+    try {
+      const car = await carsService.create(req.body)
+      return res.send(car)
+    } catch (error) {
+      next(error)
+    }
+  }
+  async edit(req, res, next) {
+    try {
+      req.body.id = req.params.id
+      const car = await carsService.edit(req.body)
+      return res.send(car)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async remove(req, res, next) {
+    try {
+      await carsService.remove(req.params.id)
+      return res.send("Delorted")
+    } catch (error) {
+      next(error)
+    }
+  }
+
+}
